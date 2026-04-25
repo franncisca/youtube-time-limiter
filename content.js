@@ -11,7 +11,6 @@
   const MAX_ATTEMPTS = 15;
   const RETRY_INTERVAL_MS = 1000;
 
-  let videoElement = null;
   let playbackState = "unkown";
   let listenerAttached = false;
 
@@ -74,7 +73,6 @@
       const video = getVideoElement();
 
       if (video) {
-        videoElement = video;
         log(`video element found after ${attempts} attempts`);
 
         attachPlaybackListener(video);
