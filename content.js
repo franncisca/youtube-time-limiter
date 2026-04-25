@@ -11,6 +11,10 @@
   const MAX_ATTEMPTS = 15;
   const RETRY_INTERVAL_MS = 1000;
 
+  let videoElement = null;
+  let playbackState = "unkown";
+  let listenerAttached = false;
+
   function log(message) {
     console.log(`${LOG_PREFIX} ${message}`);
   }
@@ -20,6 +24,43 @@
     //document: current page
     const video = document.querySelector("video");
     return video instanceof HTMLVideoElement ? video : null;
+  }
+
+  function updatePlaybackState(newState) {
+    playbackState = newState;
+    log(`Playback state changed : ${playbackState}`);
+  }
+
+  function attachPlaybackListener(video) {
+    if(listenerAttached) {
+        log("Playback listeners already attached.");
+        return;
+    }
+
+    // 1. Listen for future changes
+    video.addEventListener("play", () => {
+        updatePlaybackState("playing");
+    });
+
+    video.addEventListener("pause", () => {
+        updatePlaybackState("paused");
+    });
+
+    video.addEventListener("ended", () => {
+        updatePlaybackState("ended");
+    });
+
+
+    // 2. Set current state 
+    if (video.ended) {
+        updatePlaybackState("ended");
+    } 
+    else if(video.pause) {
+        updatePlaybackState("paused");
+    }
+    else {
+        updatePlaybackState("playing");
+    }
   }
 
   function detectVideoElement() {
@@ -33,7 +74,11 @@
       const video = getVideoElement();
 
       if (video) {
-        log("video element found");
+        videoElement = video;
+        log(`video element found after ${attempts} attempts`);
+
+        attachPlaybackListener(video);
+
         window.clearInterval(intervalId);
         return;
       }
@@ -47,4 +92,5 @@
 
   log("content script loaded");
   detectVideoElement();
+  
 })();
