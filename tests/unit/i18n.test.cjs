@@ -3,22 +3,26 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs'), path = require('node:path');
 const { t, en } = require('../../src/shared/i18n.js');
 const { Store, normalize } = require('../../src/shared/core.js');
-test('all Chinese UI strings, placeholders, accessibility labels and domain errors have English translations', () => {
-  const missing = new Set();
-  for (const file of ['src/options/index.html', 'src/options/index.js', 'src/content/overlay.js', 'src/content/index.js', 'src/shared/core.js']) {
-    const source = fs.readFileSync(path.join(__dirname, '../..', file), 'utf8');
-    const matches = file.endsWith('.html') ? [...source.matchAll(/data-i18n(?:-aria|-placeholder)?="([^"]+)"/g)] : [...source.matchAll(/'([^'\n]*[\u4e00-\u9fff][^'\n]*)'/g)];
-    for (const match of matches) {
-      const key = match[1].replaceAll('&quot;', '"').replaceAll('&amp;', '&').replaceAll('&#x27;', "'");
-      if (!en[key]) missing.add(`${file}: ${key}`);
+test('message IDs, error codes and placeholders resolve in both languages; application code has no Chinese copy', () => {
+  const { messages } = require('../../src/shared/i18n.js');
+  assert.deepEqual(Object.keys(messages.en).sort(), Object.keys(messages['zh-CN']).sort());
+  const walk = directory => fs.readdirSync(directory, { withFileTypes: true }).flatMap(entry =>
+    entry.isDirectory() ? walk(path.join(directory, entry.name)) : [path.join(directory, entry.name)]);
+  for (const file of walk(path.join(__dirname, '../../src'))) {
+    if (file.endsWith('/i18n.js')) continue;
+    const source = fs.readFileSync(file, 'utf8');
+    assert.equal(/\p{Script=Han}/u.test(source), false, file);
+    for (const [, key] of source.matchAll(/['"]((?:ui|error)\.[A-Za-z0-9]+)['"]/g)) {
+      for (const language of ['en', 'zh-CN']) assert.ok(messages[language][key], `${file}: ${language}: ${key}`);
     }
+    for (const [, key] of source.matchAll(/data-i18n(?:-aria|-placeholder)?="([^"]+)"/g)) assert.ok(en[key], key);
   }
-  assert.deepEqual([...missing], []);
   for (const [key, value] of Object.entries(en)) {
-    assert.equal(/[\u4e00-\u9fff]/.test(value), false, key);
-    assert.deepEqual([...key.matchAll(/\{\w+\}/g)].map(m => m[0]).sort(), [...value.matchAll(/\{\w+\}/g)].map(m => m[0]).sort(), key);
+    assert.equal(/\p{Script=Han}/u.test(value), false, key);
+    assert.deepEqual([...value.matchAll(/\{\w+\}/g)].map(m => m[0]).sort(), [...messages['zh-CN'][key].matchAll(/\{\w+\}/g)].map(m => m[0]).sort(), key);
   }
-  assert.equal(t('剩余 {time}', 'en', { time: '00:10:00' }), '00:10:00 left');
+  assert.equal(t('ui.remainingTime', 'en', { time: '00:10:00' }), '00:10:00 left');
+  assert.equal(t('ui.save', 'fr'), 'Save');
 });
 test('English is default; language persists without changing usage, limits or session start', async () => {
   let data = {}; const store = new Store({ get: async () => structuredClone(data), set: async value => data = structuredClone(value) });

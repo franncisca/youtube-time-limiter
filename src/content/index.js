@@ -19,7 +19,7 @@
     findVideo: () => isWatchPage() ? document.querySelector('video') : null,
     send: message => chrome.runtime.sendMessage(message),
     onState: state => overlay.update(state),
-    onError: () => overlay.showError('观看时间暂时无法保存，请刷新页面重新连接。'),
+    onError: () => overlay.showError('ui.watchTimeCouldNotBeSavedReloadThis'),
   });
   const changed = (changes, area) => { if (area === 'local' && changes.usage?.newValue) tracker.updateState(changes.usage.newValue); };
   const start = () => { tracker.navigationStart(); overlay.setVisible(false); };

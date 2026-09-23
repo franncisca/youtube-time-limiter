@@ -48,46 +48,46 @@
         const node = document.createElement(tag); if (text) { node.textContent = this.t(text); this.labels.push({ node, key: text }); }
         if (className) node.className = className; parent.append(node); return node;
       };
-      this.panel = el('section', this.shadow, '', 'panel'); this.panel.setAttribute('aria-label', 'YouTube 观看计时');
+      this.panel = el('section', this.shadow, '', 'panel'); this.panel.setAttribute('aria-label', this.t('ui.youtubeWatchTimer'));
       const header = el('div', this.panel, '', 'header');
-      this.mode = el('span', header, '观看计时');
-      this.toggle = el('button', header, '−', 'icon'); this.toggle.setAttribute('aria-label', '折叠计时小窗'); this.toggle.setAttribute('aria-expanded', 'true');
+      this.mode = el('span', header, 'ui.watchTimer');
+      this.toggle = el('button', header, '−', 'icon'); this.toggle.setAttribute('aria-label', this.t('ui.collapseTimer')); this.toggle.setAttribute('aria-expanded', 'true');
       this.compact = el('div', this.panel, '', 'compact-time'); this.compact.hidden = true;
       this.body = el('div', this.panel);
-      this.label = el('p', this.body, '剩余观看时间', 'label'); this.remaining = el('div', this.body, '--:--:--', 'time');
-      this.progress = el('progress', this.body); this.progress.max = 100; this.progress.value = 0; this.progress.setAttribute('aria-label', '额度使用进度');
+      this.label = el('p', this.body, 'ui.watchTimeLeft', 'label'); this.remaining = el('div', this.body, '--:--:--', 'time');
+      this.progress = el('progress', this.body); this.progress.max = 100; this.progress.value = 0; this.progress.setAttribute('aria-label', this.t('ui.allowanceUsedText'));
       this.detail = el('p', this.body, '', 'detail');
       const actions = el('div', this.body, '', 'actions');
-      this.settingsButton = el('button', actions, '设置'); this.sideButton = el('button', actions, '左侧');
-      this.excludeButton = el('button', this.body, '不计时', 'exclude-button');
+      this.settingsButton = el('button', actions, 'ui.settings'); this.sideButton = el('button', actions, 'ui.left');
+      this.excludeButton = el('button', this.body, 'ui.exclude', 'exclude-button');
       this.excludeButton.addEventListener('click', async () => {
         if (!this.toggleExclusion || this.excludeButton.disabled) return;
         this.excludeButton.disabled = true;
         try { await this.toggleExclusion(); }
-        catch { this.showError('清单修改失败，请稍后重试或打开设置。'); }
+        catch { this.showError('ui.couldNotUpdateTheListRetryOrOpen'); }
         finally { this.excludeButton.disabled = false; }
       });
       this.error = el('p', this.panel, '', 'error'); this.error.hidden = true; this.error.setAttribute('role', 'status');
       this.dialog = el('dialog', this.shadow); this.dialog.setAttribute('aria-labelledby', 'ytl-title'); this.dialog.setAttribute('aria-describedby', 'ytl-message');
-      el('span', this.dialog, '观看时间提醒', 'badge'); el('h2', this.dialog, '时间到了，休息一下吧。').id = 'ytl-title';
+      el('span', this.dialog, 'ui.watchTimeReminder', 'badge'); el('h2', this.dialog, 'ui.timeSUpTakeABreak').id = 'ytl-title';
       this.message = el('p', this.dialog); this.message.id = 'ytl-message';
       this.summary = el('p', this.dialog, '', 'summary');
-      el('p', this.dialog, '关闭提醒不会解除限制，视频仍保持暂停。', 'hint');
+      el('p', this.dialog, 'ui.dismissingThisReminderKeepsTheLimitInPlace', 'hint');
       const dialogActions = el('div', this.dialog, '', 'dialog-actions');
-      this.dismiss = el('button', dialogActions, '知道了', 'primary'); this.dismiss.autofocus = true;
-      this.dialogSettings = el('button', dialogActions, '设置');
+      this.dismiss = el('button', dialogActions, 'ui.gotIt', 'primary'); this.dismiss.autofocus = true;
+      this.dialogSettings = el('button', dialogActions, 'ui.settings');
       this.dismiss.addEventListener('click', () => this.closeDialog());
       this.settingsButton.addEventListener('click', () => this.open());
       this.dialogSettings.addEventListener('click', () => this.open());
       this.toggle.addEventListener('click', () => {
         this.collapsed = !this.collapsed; this.body.hidden = this.collapsed; this.compact.hidden = !this.collapsed;
         this.toggle.textContent = this.collapsed ? '+' : '−';
-        this.toggle.setAttribute('aria-label', this.collapsed ? this.t('展开计时小窗') : this.t('折叠计时小窗'));
+        this.toggle.setAttribute('aria-label', this.collapsed ? this.t('ui.expandTimer') : this.t('ui.collapseTimer'));
         this.toggle.setAttribute('aria-expanded', String(!this.collapsed));
       });
       this.sideButton.addEventListener('click', () => {
         this.left = !this.left; this.panel.style.left = this.left ? '16px' : 'auto'; this.panel.style.right = this.left ? 'auto' : '16px';
-        this.sideButton.textContent = this.left ? this.t('右侧') : this.t('左侧');
+        this.sideButton.textContent = this.left ? this.t('ui.right') : this.t('ui.left');
       });
       this.panel.hidden = true; this.reparent();
     }
@@ -111,35 +111,35 @@
       const normalized = root.YTLCore.normalize(state, this.now());
       for (const { node, key } of this.labels) node.textContent = this.t(key);
       this.host.setAttribute('lang', normalized.language);
-      this.panel.setAttribute('aria-label', this.t('YouTube 观看计时'));
-      this.progress.setAttribute('aria-label', this.t('额度使用进度'));
+      this.panel.setAttribute('aria-label', this.t('ui.youtubeWatchTimer'));
+      this.progress.setAttribute('aria-label', this.t('ui.allowanceUsedText'));
       this.toggle.textContent = this.collapsed ? '+' : '−';
-      this.toggle.setAttribute('aria-label', this.t(this.collapsed ? '展开计时小窗' : '折叠计时小窗'));
-      this.sideButton.textContent = this.t(this.left ? '右侧' : '左侧');
+      this.toggle.setAttribute('aria-label', this.t(this.collapsed ? 'ui.expandTimer' : 'ui.collapseTimer'));
+      this.sideButton.textContent = this.t(this.left ? 'ui.right' : 'ui.left');
       if (this.errorKey) this.error.textContent = this.t(this.errorKey);
       const id = this.getVideoId();
       const excluded = root.YTLCore.isExcluded(normalized, id);
       this.excludeButton.hidden = !id || !this.toggleExclusion;
-      this.excludeButton.textContent = excluded ? this.t('恢复计时') : this.t('不计时');
-      this.label.textContent = excluded ? this.t('当前视频状态') : this.t('剩余观看时间');
+      this.excludeButton.textContent = excluded ? this.t('ui.include') : this.t('ui.exclude');
+      this.label.textContent = excluded ? this.t('ui.currentVideo') : this.t('ui.watchTimeLeft');
       this.progress.hidden = excluded;
       const usage = root.YTLCore.currentUsage(normalized, this.now());
       const format = root.YTLCore.formatTime;
-      this.mode.textContent = normalized.mode === 'session' ? this.t('临时观看额度') : this.t('每日观看额度');
+      this.mode.textContent = normalized.mode === 'session' ? this.t('ui.temporaryAllowance') : this.t('ui.dailyAllowanceText');
       this.remaining.textContent = format(usage.remainingMs);
-      this.compact.textContent = this.t('剩余 {time}', { time: format(usage.remainingMs) });
-      this.detail.textContent = this.t('已看 {used} / {limit}', { used: format(usage.watchedMs), limit: format(usage.limitMs) });
+      this.compact.textContent = this.t('ui.remainingTime', { time: format(usage.remainingMs) });
+      this.detail.textContent = this.t('ui.watchedUsedLimit', { used: format(usage.watchedMs), limit: format(usage.limitMs) });
       this.progress.value = Math.min(100, usage.watchedMs / usage.limitMs * 100);
       this.panel.setAttribute('data-blocked', String(usage.blocked));
       this.message.textContent = normalized.mode === 'session'
-        ? this.t('从本次设置时刻起的观看额度已用完，视频已暂停。')
-        : this.t('当天总观看时间已达到每日额度，视频已暂停。明天自动恢复额度，无需重新设置。');
-      this.summary.textContent = this.t('已观看 {used} · 上限 {limit}', { used: format(usage.watchedMs), limit: format(usage.limitMs) });
+        ? this.t('ui.yourTemporaryAllowanceIsUsedUpPlaybackIs')
+        : this.t('ui.todaySTotalHasReachedYourDailyLimit');
+      this.summary.textContent = this.t('ui.watchedUsedLimitLimit', { used: format(usage.watchedMs), limit: format(usage.limitMs) });
       if (excluded) {
-        this.mode.textContent = this.t('不计时');
-        this.remaining.textContent = this.t('已豁免');
-        this.compact.textContent = this.t('不计时');
-        this.detail.textContent = this.t('不消耗额度，不触发到限动作');
+        this.mode.textContent = this.t('ui.exclude');
+        this.remaining.textContent = this.t('ui.excluded');
+        this.compact.textContent = this.t('ui.exclude');
+        this.detail.textContent = this.t('ui.noTimeCountedNoLimitAction');
         this.panel.setAttribute('data-blocked', 'false');
         this.closeDialog(); this.shownKey = null; return;
       }
@@ -150,14 +150,14 @@
         if (normalized.limitAction === 'redirect' && this.navigate) {
           this.closeDialog();
           try { this.navigate(normalized.redirectUrl); return; }
-          catch { this.showError('无法跳转到静心页面，已保留暂停提醒。'); }
+          catch { this.showError('ui.couldNotRedirectPlaybackRemainsPausedWithThis'); }
         }
         if (!this.dialog.open) this.dialog.showModal();
       }
     }
     async open() {
       try { await this.openSettings(); this.closeDialog(); }
-      catch { this.showError('无法打开设置，请点击浏览器工具栏中的扩展图标。'); }
+      catch { this.showError('ui.couldNotOpenSettingsUseTheExtensionIcon'); }
     }
     showError(message) { this.errorKey = message; this.error.textContent = this.t(message); this.error.hidden = false; }
     dispose() { this.visible = false; this.closeDialog(); this.host.remove(); }

@@ -6,21 +6,21 @@
   };
   const validSeconds = value => Number.isInteger(value) && value >= 1 && value <= 86400;
   function redirectURL(value) {
-    if (typeof value !== 'string' || value.trim().length > 2048) throw new Error('请填写有效的静心页面地址');
+    if (typeof value !== 'string' || value.trim().length > 2048) throw new Error('error.invalidCalmUrl');
     let url;
-    try { url = new URL(value.trim()); } catch { throw new Error('请输入完整地址，例如 https://example.com/breathe'); }
-    if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password) throw new Error('静心页面须使用 http:// 或 https://，且不能包含登录凭据');
+    try { url = new URL(value.trim()); } catch { throw new Error('error.incompleteCalmUrl'); }
+    if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password) throw new Error('error.unsafeCalmUrl');
     const host = url.hostname.toLowerCase().replace(/\.$/, '');
-    if (host === 'youtube.com' || host.endsWith('.youtube.com') || host === 'youtu.be' || host.endsWith('.youtu.be')) throw new Error('请选择 YouTube 以外的页面，避免重复跳转');
+    if (host === 'youtube.com' || host.endsWith('.youtube.com') || host === 'youtu.be' || host.endsWith('.youtu.be')) throw new Error('error.redirectLoop');
     return url.href;
   }
   function videoID(value) {
-    if (typeof value !== 'string') throw new Error('请输入 YouTube 视频链接或视频 ID');
+    if (typeof value !== 'string') throw new Error('error.missingVideo');
     const input = value.trim();
     if (/^[A-Za-z0-9_-]{11}$/.test(input)) return input;
     let url;
-    try { url = new URL(input); } catch { throw new Error('请输入完整的 YouTube 视频链接'); }
-    if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password) throw new Error('请输入有效的 YouTube 视频链接');
+    try { url = new URL(input); } catch { throw new Error('error.incompleteVideoUrl'); }
+    if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password) throw new Error('error.invalidVideoUrl');
     const host = url.hostname.toLowerCase();
     let id;
     if (host === 'youtu.be') id = url.pathname.slice(1);
@@ -28,7 +28,7 @@
       if (url.pathname === '/watch') id = url.searchParams.get('v');
       else id = url.pathname.match(/^\/(?:shorts|live|embed)\/([A-Za-z0-9_-]{11})\/?$/)?.[1];
     }
-    if (!/^[A-Za-z0-9_-]{11}$/.test(id || '')) throw new Error('请填写单个 YouTube 视频链接，不支持频道或播放清单');
+    if (!/^[A-Za-z0-9_-]{11}$/.test(id || '')) throw new Error('error.singleVideoRequired');
     return id;
   }
   const isExcluded = (state, id) => Boolean(id && state?.excludedVideos?.some(entry => entry.id === id));
@@ -72,8 +72,8 @@
   function addUsage(value, message, now) {
     const state = normalize(value, now);
     const { start, end, elapsed } = message;
-    if (![start, end, elapsed].every(Number.isFinite) || end < start || elapsed < 0 || end > now + 5000) throw new Error('Invalid usage interval');
-    if (message.videoId !== undefined && message.videoId !== null && !/^[A-Za-z0-9_-]{11}$/.test(message.videoId)) throw new Error('Invalid video ID');
+    if (![start, end, elapsed].every(Number.isFinite) || end < start || elapsed < 0 || end > now + 5000) throw new Error('error.invalidUsageInterval');
+    if (message.videoId !== undefined && message.videoId !== null && !/^[A-Za-z0-9_-]{11}$/.test(message.videoId)) throw new Error('error.invalidVideoId');
     if (isExcluded(state, message.videoId)) return state;
     const portionSince = boundary => {
       if (end === start) return end >= boundary && end <= now ? elapsed : 0;
@@ -94,16 +94,16 @@
         let state = normalize(saved, this.now());
         if (message.type === 'usage') state = addUsage(state, message, this.now());
         else if (message.type === 'limit') {
-          if (!Number.isInteger(message.minutes) || message.minutes < 1 || message.minutes > 1440) throw new Error('Limit must be 1–1440 whole minutes');
+          if (!Number.isInteger(message.minutes) || message.minutes < 1 || message.minutes > 1440) throw new Error('error.invalidLimitMinutes');
           state.dailyLimitSeconds = message.minutes * 60;
         } else if (message.type === 'settings') {
-          if (!['daily', 'session'].includes(message.mode) || !validSeconds(message.limitSeconds)) throw new Error('请选择计时方式，并设置 1 秒至 24 小时的上限');
-          if (message.restart !== undefined && typeof message.restart !== 'boolean') throw new Error('Invalid restart');
+          if (!['daily', 'session'].includes(message.mode) || !validSeconds(message.limitSeconds)) throw new Error('error.invalidSettings');
+          if (message.restart !== undefined && typeof message.restart !== 'boolean') throw new Error('error.invalidRestart');
           state.mode = message.mode;
           state[message.mode === 'session' ? 'sessionLimitSeconds' : 'dailyLimitSeconds'] = message.limitSeconds;
           if (message.mode === 'session' && (message.restart || !state.session)) state.session = { startedAt: this.now(), watchedMs: 0 };
         } else if (message.type === 'language') {
-          if (!['zh-CN', 'en'].includes(message.language)) throw new Error('不支持此语言');
+          if (!['zh-CN', 'en'].includes(message.language)) throw new Error('error.unsupportedLanguage');
           state.language = message.language;
         } else if (message.type === 'exclude-add') {
           const id = videoID(message.video);
@@ -115,16 +115,16 @@
           const id = videoID(message.video);
           state.excludedVideos = state.excludedVideos.filter(entry => entry.id !== id);
         } else if (message.type === 'behavior') {
-          if (!['dialog', 'redirect'].includes(message.limitAction)) throw new Error('请选择有效的到限动作');
+          if (!['dialog', 'redirect'].includes(message.limitAction)) throw new Error('error.invalidLimitAction');
           state.limitAction = message.limitAction;
           if (message.limitAction === 'redirect') state.redirectUrl = redirectURL(message.redirectUrl);
         } else if (message.type === 'daily-total') {
-          if (message.day !== state.day) throw new Error('日期已变化，请刷新后补齐今天的时间');
-          if (!Number.isInteger(message.totalSeconds) || message.totalSeconds < 0 || message.totalSeconds > 86400) throw new Error('今日总时间须在 0 至 24 小时之间');
-          if (message.totalSeconds * 1000 < dailyTotal(state)) throw new Error('补齐后的总时间不能少于当前总时间，请暂停视频后重试');
+          if (message.day !== state.day) throw new Error('error.correctionDateChanged');
+          if (!Number.isInteger(message.totalSeconds) || message.totalSeconds < 0 || message.totalSeconds > 86400) throw new Error('error.invalidDailyTotal');
+          if (message.totalSeconds * 1000 < dailyTotal(state)) throw new Error('error.correctionBelowTotal');
           // Replace only the manual contribution; repeated submissions are not additive.
           state.manualMs = message.totalSeconds * 1000 - state.watchedMs;
-        } else if (message.type !== 'status') throw new Error('Unknown request');
+        } else if (message.type !== 'status') throw new Error('error.unknownRequest');
         state = normalize(state, this.now());
         if (JSON.stringify(saved) !== JSON.stringify(state)) await this.storage.set({ usage: state });
         return state;

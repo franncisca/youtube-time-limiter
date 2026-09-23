@@ -1,9 +1,10 @@
+const { t } = require('../../src/shared/i18n.js');
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const vm = require('node:vm'), fs = require('node:fs'), path = require('node:path');
 const { Store, dayKey } = require('../../src/shared/core.js');
 const flush = () => new Promise(resolve => setImmediate(resolve));
-async function page(language = 'zh-CN') {
+async function page(language = 'en') {
   class Element extends require('../helpers/fake-dom.cjs').Element {
     textContent = ''; value = '0'; checked = false; disabled = false; hidden = false;
     classList = { toggle() {} }; reportValidity() { return true; }
@@ -35,15 +36,15 @@ test('settings render HH:MM:SS; polling preserves drafts; starting a session ret
   await p.submit();
   assert.equal(p.state.mode, 'session'); assert.equal(p.state.limitSeconds, 120);
   assert.equal(p.$('#usage').textContent, '00:00:00'); assert.equal(p.$('#daily-total').textContent, '00:03:03');
-  assert.match(p.$('#status').textContent, /已从此刻开始/);
+  assert.match(p.$('#status').textContent, /Started with a full temporary/);
   await p.submit();
   assert.equal(p.messages.filter(m => m.type === 'settings').at(-1).restart, true);
   p.select('daily'); assert.equal(p.$('#minutes').value, 5); p.$('#minutes').value = '2'; await p.submit(); assert.equal(p.$('#usage').textContent, '00:03:03');
-  assert.equal(p.$('#limit-state').textContent, '已达上限'); assert.equal(p.$('#remaining').textContent, '00:00:00');
+  assert.equal(p.$('#limit-state').textContent, "Limit reached"); assert.equal(p.$('#remaining').textContent, '00:00:00');
 });
 test('settings validate zero/overlarge durations and recover from save errors; presets set full duration', async () => {
   const p = await page(); p.$('#hours').value = '0'; p.$('#minutes').value = '0'; p.$('#seconds').value = '0';
-  await p.submit(); assert.match(p.$('#status').textContent, /1 秒至 24 小时/);
+  await p.submit(); assert.match(p.$('#status').textContent, /1 second and 24 hours/);
   assert.equal(p.messages.filter(m => m.type === 'settings').length, 0);
   p.$('#hours').value = '24'; p.$('#seconds').value = '1'; await p.submit();
   assert.equal(p.messages.filter(m => m.type === 'settings').length, 0);
@@ -56,8 +57,8 @@ test('manual total form sets total rather than adding it, updates remaining and 
   p.$('#total-hours').value = '3'; p.$('#total-minutes').value = '0'; p.$('#total-seconds').value = '0';
   p.$('#correction-form').dispatchEvent(new Event('submit')); await flush();
   assert.equal(p.$('#daily-total').textContent, '03:00:00'); assert.equal(p.$('#remaining').textContent, '00:00:00');
-  assert.match(p.$('#time-source').textContent, /自动记录 00:03:03/);
-  assert.match(p.$('#default-summary').textContent, /每天自动生效/);
+  assert.match(p.$('#time-source').textContent, /Recorded 00:03:03/);
+  assert.match(p.$('#default-summary').textContent, /Renews automatically/);
   p.$('#correction-form').dispatchEvent(new Event('submit')); await flush();
   assert.equal(p.$('#daily-total').textContent, '03:00:00');
   p.select('session'); p.$('#hours').value = '1'; p.$('#minutes').value = '0'; p.$('#seconds').value = '0'; await p.submit();
@@ -93,10 +94,10 @@ test('exclusion form adds canonical entries, safely displays labels, avoids dupl
   await p.poll(); assert.equal(p.$('#exclusion-list').children[0], row);
   row.children[1].click(); await flush(); assert.equal(p.state.excludedVideos.length, 0); assert.equal(p.$('#exclusion-empty').hidden, false);
   p.$('#exclusion-video').value = 'https://youtube.com/@channel'; p.$('#exclusion-form').dispatchEvent(new Event('submit')); await flush();
-  assert.match(p.$('#exclusion-status').textContent, /单个 YouTube 视频/); assert.equal(p.state.excludedVideos.length, 0);
+  assert.match(p.$('#exclusion-status').textContent, /one video URL/); assert.equal(p.state.excludedVideos.length, 0);
 });
 test('language selection translates live settings, validation and list controls without clearing drafts or restarting', async () => {
-  const p = await page(); assert.equal(p.$('#language').value, 'zh-CN'); assert.equal(p.$('#save').textContent, '保存');
+  const p = await page('zh-CN'); assert.equal(p.$('#language').value, 'zh-CN'); assert.equal(p.$('#save').textContent, t('ui.save', 'zh-CN'));
   p.select('session'); await p.submit(); const start = p.state.session.startedAt;
   p.$('#minutes').value = '12'; p.$('#redirect-url').value = 'https://example.com/draft';
   p.$('#language').value = 'en'; p.$('#language').dispatchEvent(new Event('change')); await flush();
@@ -109,10 +110,23 @@ test('language selection translates live settings, validation and list controls 
   p.$('#exclusion-video').value = 'aaaaaaaaaaa'; p.$('#exclusion-form').dispatchEvent(new Event('submit')); await flush();
   assert.equal(p.$('#exclusion-list').children[0].children[1].textContent, 'Remove');
   p.$('#language').value = 'zh-CN'; p.$('#language').dispatchEvent(new Event('change')); await flush();
-  assert.equal(p.$('#save').textContent, '开始计时'); assert.equal(p.$('#exclusion-list').children[0].children[1].textContent, '移除');
+  assert.equal(p.$('#save').textContent, t('ui.start', 'zh-CN')); assert.equal(p.$('#exclusion-list').children[0].children[1].textContent, t('ui.remove', 'zh-CN'));
 });
 test('settings without a saved language start in English and preserve an explicit Chinese preference', async () => {
   const fresh = await page(null);
   assert.equal(fresh.$('#language').value, 'en'); assert.equal(fresh.$('#save').textContent, 'Save');
-  const existing = await page('zh-CN'); assert.equal(existing.$('#save').textContent, '保存');
+  const existing = await page('zh-CN'); assert.equal(existing.$('#save').textContent, t('ui.save', 'zh-CN'));
+});
+test('domain failures arriving through messaging are translated using the selected language', async () => {
+  for (const language of ['en', 'zh-CN']) {
+    const p = await page(language);
+    p.$('#total-hours').value = '0'; p.$('#total-minutes').value = '0'; p.$('#total-seconds').value = '1';
+    p.$('#correction-form').dispatchEvent(new Event('submit')); await flush();
+    const text = p.$('#correction-status').textContent;
+    assert.ok(text.includes(t('error.correctionBelowTotal', language)));
+    assert.equal(text.includes('error.'), false);
+    assert.equal(p.state.watchedMs, 183000);
+    p.$('#exclusion-video').value = 'bad'; p.$('#exclusion-form').dispatchEvent(new Event('submit')); await flush();
+    assert.equal(p.$('#exclusion-status').textContent, t('error.incompleteVideoUrl', language));
+  }
 });

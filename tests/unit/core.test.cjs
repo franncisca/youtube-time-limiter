@@ -79,11 +79,11 @@ test('manual total is idempotent, retains automatic use, and resets at midnight 
   const message = { type: 'daily-total', day: dayKey(now), totalSeconds: 10800 };
   await s.request(message); let state = await s.request(message);
   assert.equal(dailyTotal(state), 10800000); assert.equal(state.watchedMs, 180000); assert.equal(state.manualMs, 10620000);
-  await assert.rejects(s.request({ ...message, totalSeconds: 2 }), /不能少于/);
+  await assert.rejects(s.request({ ...message, totalSeconds: 2 }), /error.correctionBelowTotal/);
   await assert.rejects(s.request({ ...message, totalSeconds: 86401 }));
   now += 2000; state = await new Store(disk, () => now).request({ type: 'status' });
   assert.equal(dailyTotal(state), 0); assert.equal(state.dailyLimitSeconds, 3600); assert.equal(currentUsage(state, now).remainingMs, 3600000);
-  await assert.rejects(s.request(message), /日期已变化/);
+  await assert.rejects(s.request(message), /error.correctionDateChanged/);
 });
 test('redirect addresses require HTTP(S), reject credentials and YouTube loops; corrupt stored data falls back to dialog', () => {
   assert.equal(redirectURL(' https://example.com/breathe?q=calm#start '), 'https://example.com/breathe?q=calm#start');
@@ -112,9 +112,9 @@ test('video URL aliases resolve to one ID; channels, playlists and lookalike dom
 test('exclusion list deduplicates, persists across midnight/worker restart, and drops late reports without clearing totals', async () => {
   let now = Date.now(); const disk = storage(); let s = new Store(disk, () => now);
   await s.request({ type: 'usage', start: now - 1000, end: now, elapsed: 1000, videoId: 'aaaaaaaaaaa' });
-  await s.request({ type: 'exclude-add', video: 'https://youtu.be/aaaaaaaaaaa', title: '课程' });
+  await s.request({ type: 'exclude-add', video: 'https://youtu.be/aaaaaaaaaaa', title: 'Course' });
   let state = await s.request({ type: 'exclude-add', video: 'https://www.youtube.com/watch?v=aaaaaaaaaaa&t=20' });
-  assert.deepEqual(state.excludedVideos, [{ id: 'aaaaaaaaaaa', title: '课程' }]);
+  assert.deepEqual(state.excludedVideos, [{ id: 'aaaaaaaaaaa', title: 'Course' }]);
   state = await s.request({ type: 'usage', start: now - 500, end: now, elapsed: 500, videoId: 'aaaaaaaaaaa' });
   assert.equal(state.watchedMs, 1000);
   now += 86400000; s = new Store(disk, () => now); state = await s.request({ type: 'status' });

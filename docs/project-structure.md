@@ -34,7 +34,7 @@ For a new setting:
 
 1. Define its default, validation, persistence and rollover behavior in `src/shared/core.js`.
 2. Add the settings control and a command in `src/options`.
-3. Translate visible text in `src/shared/i18n.js`.
+3. Add a stable English message ID to both dictionaries in `src/shared/i18n.js`; keep translated copy out of application code. Domain validation uses `error.*` IDs, translated at the UI boundary.
 4. Consume the persisted state in the tracker or overlay as appropriate.
 5. Add behavioral tests and update the relevant documentation.
 
