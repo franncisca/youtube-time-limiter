@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <title>YouTube Time Limiter</title>
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="#244e3e"/>
+  <circle cx="64" cy="68" r="37" fill="none" stroke="#c9e5a8" stroke-width="9"/>
+  <path d="M57 12h14a4 4 0 0 1 0 8H57a4 4 0 0 1 0-8Z" fill="#c9e5a8"/>
+  <path d="M64 20v10" stroke="#c9e5a8" stroke-width="7"/>
+  <path d="M55 49a3 3 0 0 0-4 3v32a3 3 0 0 0 4 3l25-16a3.5 3.5 0 0 0 0-6Z" fill="#f3f7ef"/>
+</svg>

@@ -3,17 +3,17 @@ const http = require('node:http');
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const { root } = require('./paths.cjs');
-const mime = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8' };
+const mime = { '.png': 'image/png', '.svg': 'image/svg+xml', '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8' };
 async function responseFor(rawURL) {
   const pathname = decodeURIComponent(new URL(rawURL, 'http://localhost').pathname);
   const route = pathname === '/' ? '/prototype/index.html' : pathname;
-  if (!/^\/(prototype|src)\//.test(route)) return { status: 404, body: 'Not found' };
+  if (!/^\/(prototype|src|icons)\//.test(route)) return { status: 404, body: 'Not found' };
   const file = path.resolve(root, '.' + route);
-  if (!['prototype', 'src'].some(dir => file.startsWith(path.join(root, dir) + path.sep))) return { status: 404, body: 'Not found' };
+  if (!['prototype', 'src', 'icons'].some(dir => file.startsWith(path.join(root, dir) + path.sep))) return { status: 404, body: 'Not found' };
   const type = mime[path.extname(file)];
   if (!type) return { status: 404, body: 'Not found' };
   let body;
-  try { body = await fs.readFile(file, 'utf8'); } catch { return { status: 404, body: 'Not found' }; }
+  try { body = await fs.readFile(file, path.extname(file) === '.png' ? undefined : 'utf8'); } catch { return { status: 404, body: 'Not found' }; }
   if (route === '/src/options/index.html') {
     body = body.replace('<script src="index.js"></script>', '<script src="/prototype/mock-runtime.js"></script><script src="index.js"></script>');
     body = body.replace('<body class="ytl-settings">', '<body class="ytl-settings"><p style="text-align:center;font:12px system-ui;color:#576951">PROTOTYPE · simulated local data · not your extension settings</p>');

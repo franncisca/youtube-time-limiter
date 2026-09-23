@@ -17,5 +17,11 @@ test('prototype serves production settings with mock adapter only through the de
   assert.match(options.body, /mock-runtime.js/); assert.match(options.body, /PROTOTYPE/);
   assert.ok(options.body.indexOf('mock-runtime.js') < options.body.indexOf('src="index.js"'));
   assert.equal((await responseFor('/src/shared/core.js')).status, 200);
+  for (const size of [16, 32, 48, 128, 256]) {
+    const icon = await responseFor(`/icons/icon-${size}.png`);
+    assert.equal(icon.type, 'image/png');
+    assert.equal(icon.body.readUInt32BE(16), size);
+    assert.equal(icon.body.readUInt32BE(20), size);
+  }
   for (const file of ['/.git/config', '/README.md', '/prototype/..%2f..%2fREADME.md', '/src/..%2fREADME.md', '/prototype/missing.js']) assert.equal((await responseFor(file)).status, 404, file);
 });

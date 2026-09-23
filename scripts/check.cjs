@@ -7,6 +7,7 @@ function extensionFiles() {
   const manifest = JSON.parse(read('manifest.json'));
   const files = new Set(['manifest.json', manifest.background.service_worker, manifest.options_page]);
   for (const script of manifest.content_scripts) for (const file of [...script.js, ...(script.css || [])]) files.add(file);
+  for (const file of [...Object.values(manifest.icons || {}), ...Object.values(manifest.action?.default_icon || {})]) files.add(file);
   const html = read(manifest.options_page);
   for (const match of html.matchAll(/(?:src|href)="([^"#:]+)"/g)) files.add(path.posix.join(path.posix.dirname(manifest.options_page), match[1]));
   const worker = read(manifest.background.service_worker);
