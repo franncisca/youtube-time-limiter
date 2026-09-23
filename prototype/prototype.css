@@ -1,0 +1,30 @@
+* { box-sizing: border-box; }
+body { margin: 0; background: #f3f5ef; color: #23392b; font: 15px/1.6 system-ui, sans-serif; }
+header { display: flex; align-items: center; justify-content: space-between; gap: 20px; max-width: 1280px; margin: auto; padding: 28px 32px; }
+h1 { margin: 4px 0; font-size: 27px; letter-spacing: -.7px; }
+h2 { font-size: 20px; }
+header p, .note { font-size: 12px; color: #687768; margin: 0; }
+.eyebrow { font-size: 10px; font-weight: 750; letter-spacing: 2px; color: #6b7b60; }
+button { border: 1px solid #d1ddcc; border-radius: 9px; padding: 10px 16px; background: white; color: #31533e; font: 600 12px system-ui; cursor: pointer; }
+button:hover { background: #e8eedf; }
+button:focus-visible { outline: 3px solid #9fbd74; outline-offset: 3px; }
+button.selected, #play, #quick-start { background: #315f47; color: white; border-color: #315f47; }
+nav { display: flex; gap: 8px; flex-shrink: 0; }
+main { max-width: 1280px; margin: auto; padding: 12px 32px; }
+.demo-grid { display: grid; grid-template-columns: minmax(0, 1fr) 250px; gap: 28px; }
+.player { min-height: 310px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(140deg,#284637,#14271c); border-radius: 22px; color: #e5efdf; padding: 24px; }
+.player h2 { margin: 12px 0 0; }
+.player p { margin: 6px 0; color: #adc7aa; }
+.tag { letter-spacing: 1.5px; font-size: 9px; color: #aac2a1; }
+.play-symbol { font-size: 45px; color: #bad2ab; margin-top: 24px; }
+.transport, .scenario-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 10px; }
+.scenario { background: white; border: 1px solid #e0e7db; border-radius: 16px; padding: 20px; margin-top: 24px; }
+.scenario h2 { margin: 0; }
+.scenario p { font-size: 12px; color: #60705f; }
+.guide { margin-top: 245px; padding: 0 8px; font-size: 12px; color: #647261; }
+.guide ol { padding-left: 20px; } .guide li { margin-bottom: 12px; }
+#demo-log { overflow-wrap: anywhere; }
+iframe { display: block; border: 0; width: 100%; height: calc(100vh - 190px); min-height: 540px; }
+[hidden] { display: none !important; }
+footer { padding: 20px 32px; font-size: 11px; color: #798272; text-align: center; }
+@media(max-width: 760px) { header { flex-direction: column; align-items: flex-start; padding: 20px; } main { padding: 10px 20px; } .demo-grid { display: block; } .guide { margin-top: 24px; } .player { min-height: 250px; } }

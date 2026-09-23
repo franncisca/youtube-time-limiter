@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "YouTube Time Limiter",
-  "version": "0.1.0",
+  "version": "0.9.0",
   "description": "Track daily YouTube watch time and pause playback when a user-defined limit is reached.",
   "permissions": [
     "storage"
@@ -10,23 +10,24 @@
     "https://www.youtube.com/*"
   ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "src/background/service-worker.js"
   },
   "content_scripts": [
     {
       "matches": [
-        "https://www.youtube.com/watch*"
+        "https://www.youtube.com/*"
       ],
       "js": [
-        "content.js"
-      ],
-      "css": [
-        "styles.css"
+        "src/shared/i18n.js",
+        "src/shared/core.js",
+        "src/content/tracker.js",
+        "src/content/overlay.js",
+        "src/content/index.js"
       ],
       "run_at": "document_idle"
     }
   ],
-  "options_page": "options.html",
+  "options_page": "src/options/index.html",
   "action": {
     "default_title": "YouTube Time Limiter"
   }

@@ -1,0 +1,76 @@
+.ytl-settings { margin: 0; color: #223530; background: #f4f6f2; font: 15px/1.65 system-ui, -apple-system, sans-serif; }
+.ytl-settings * { box-sizing: border-box; }
+.ytl-settings main { max-width: 800px; margin: 0 auto; padding: 44px 28px 28px; }
+.ytl-settings .page-header { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+.ytl-settings .brand-icon { display: grid; place-items: center; width: 46px; height: 46px; background: #dce8dc; border-radius: 15px; color: #2e604c; }
+.ytl-settings .eyebrow { font-size: 10px; font-weight: 750; letter-spacing: 2px; color: #597367; }
+.ytl-settings h1 { font-size: 23px; line-height: 1.3; margin: 4px 0 0; letter-spacing: -.6px; }
+.ytl-settings .local-badge { margin-left: auto; font-size: 11px; color: #5b7265; white-space: nowrap; }
+.ytl-settings .overview { padding: 28px 32px 20px; color: #fff; background: #244e3e; border-radius: 22px; box-shadow: 0 12px 28px #203c3010; }
+.ytl-settings .overview-top { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+.ytl-settings .pill { border-radius: 20px; padding: 4px 12px; font-size: 11px; background: #ffffff16; color: #e2eedb; }
+.ytl-settings .pill.exhausted { background: #ffe4b6; color: #5e3700; }
+.ytl-settings .clock { font-size: clamp(44px, 10vw, 68px); font-weight: 600; line-height: 1.15; margin-top: 20px; letter-spacing: 3px; font-variant-numeric: tabular-nums; }
+.ytl-settings .clock-caption { margin: 5px 0 20px; color: #c6d8cd; font-size: 12px; }
+.ytl-settings progress { display: block; appearance: none; width: 100%; height: 6px; border: 0; border-radius: 8px; overflow: hidden; background: #ffffff24; }
+.ytl-settings progress::-webkit-progress-bar { background: #ffffff24; }
+.ytl-settings progress::-webkit-progress-value { background: #c9e5a8; border-radius: 8px; }
+.ytl-settings .metrics { display: flex; justify-content: space-between; margin-top: 18px; }
+.ytl-settings .metrics div:last-child { text-align: right; }
+.ytl-settings .metrics span { display: block; color: #c6d8cd; font-size: 11px; }
+.ytl-settings .metrics strong { font-size: 20px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.ytl-settings .range { border-top: 1px solid #ffffff20; padding-top: 14px; margin: 16px 0 0; font-size: 11px; color: #c6d8cd; }
+.ytl-settings .settings-card { background: #fff; border: 1px solid #e2e8e0; border-radius: 20px; padding: 26px 28px 14px; margin-top: 20px; }
+.ytl-settings fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.ytl-settings legend { font-size: 18px; font-weight: 650; padding: 0; }
+.ytl-settings .section-note { margin: 4px 0 20px; font-size: 12px; color: #6b7a72; }
+.ytl-settings .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ytl-settings .mode-card { display: flex; gap: 10px; cursor: pointer; border: 1px solid #dce3dc; border-radius: 12px; padding: 16px; }
+.ytl-settings .mode-card:has(input:checked) { border-color: #49745b; background: #f1f6ef; box-shadow: inset 0 0 0 1px #49745b; }
+.ytl-settings input[type=radio] { accent-color: #315f47; align-self: flex-start; margin: 6px 0 0; }
+.ytl-settings .mode-card strong { display: block; font-size: 14px; }
+.ytl-settings .mode-card small { display: block; margin-top: 4px; color: #68786f; font-size: 11px; }
+.ytl-settings .mode-help { font-size: 11px; color: #64756a; margin: 12px 0 22px; min-height: 36px; }
+.ytl-settings .field-title { display: block; font-weight: 600; font-size: 13px; margin-bottom: 10px; }
+.ytl-settings .duration-inputs { display: flex; gap: 12px; align-items: flex-start; }
+.ytl-settings .duration-inputs label { width: 88px; text-align: center; font-size: 11px; color: #637269; }
+.ytl-settings .duration-inputs input { width: 100%; display: block; padding: 10px 6px; margin-bottom: 4px; border: 1px solid #dce3dc; border-radius: 9px; background: #fafbf9; font: 500 23px/1.2 system-ui; color: #223530; text-align: center; }
+.ytl-settings .duration-inputs > span { padding-top: 9px; color: #839288; font-size: 20px; }
+.ytl-settings button { font: inherit; cursor: pointer; border: 1px solid transparent; border-radius: 8px; }
+.ytl-settings .presets { display: flex; gap: 8px; margin: 14px 0 24px; flex-wrap: wrap; }
+.ytl-settings .presets button { background: #f1f4ee; color: #52685a; padding: 5px 14px; font-size: 11px; }
+.ytl-settings .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.ytl-settings .primary { background: #315f47; color: white; padding: 11px 22px; font-size: 13px; font-weight: 600; }
+.ytl-settings .secondary { background: #fff; border-color: #ccd8cd; color: #315f47; padding: 11px 18px; font-size: 13px; }
+.ytl-settings button:hover { filter: brightness(.94); }
+.ytl-settings :focus-visible { outline: 3px solid #9aae62; outline-offset: 3px; }
+.ytl-settings :disabled { cursor: wait; opacity: .6; }
+.ytl-settings .status { margin: 12px 0 0; min-height: 22px; font-size: 12px; color: #476147; }
+.ytl-settings .record-note { margin: 22px 4px 0; }
+.ytl-settings h2 { font-size: 13px; margin: 0 0 7px; }
+.ytl-settings .record-note p, .ytl-settings footer { color: #6b7a72; font-size: 11px; }
+.ytl-settings .record-note p { margin: 0 0 12px; }
+.ytl-settings .today-row { display: flex; justify-content: space-between; gap: 14px; font-size: 11px; padding-bottom: 16px; border-bottom: 1px solid #dfe5dc; }
+.ytl-settings .today-row strong { font-variant-numeric: tabular-nums; }
+.ytl-settings footer { text-align: center; margin-top: 20px; line-height: 1.9; }
+@media (max-width: 520px) { .ytl-settings main { padding: 24px 16px; } .ytl-settings .local-badge { display: none; } .ytl-settings h1 { font-size: 20px; } .ytl-settings .overview, .ytl-settings .settings-card { padding: 22px 20px; } .ytl-settings .mode-grid { grid-template-columns: 1fr; } }
+.ytl-settings .correction { margin-top: 14px; padding: 12px 16px; border: 1px solid #dce3dc; border-radius: 12px; background: #fff; }
+.ytl-settings .correction summary { cursor: pointer; font-size: 12px; font-weight: 600; }
+.ytl-settings .correction p { margin: 12px 0; }
+.ytl-settings .correction button { margin-top: 12px; }
+.ytl-settings #default-summary { margin: 12px 0 0; }
+.ytl-settings #redirect-fields { margin-top: 18px; }
+.ytl-settings .url-input { display: block; width: 100%; min-width: 0; padding: 12px; border: 1px solid #cdd9ce; border-radius: 9px; color: #223530; background: #fafbf9; font: 14px system-ui, sans-serif; }
+.ytl-settings #behavior-form .mode-grid { margin-bottom: 18px; }
+.ytl-settings .exclusion-title { margin-top: 14px; }
+.ytl-settings .exclusion-add { margin-top: 16px; }
+.ytl-settings .exclusion-list { list-style: none; padding: 0; margin: 10px 0; }
+.ytl-settings .exclusion-list li { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid #e2e8e0; padding: 12px 0; }
+.ytl-settings .exclusion-list a { color: #315f47; font-size: 13px; overflow-wrap: anywhere; }
+.ytl-settings .exclusion-list button { flex-shrink: 0; }
+.ytl-settings .language-picker { margin-left: auto; font-size: 10px; color: #597367; white-space: nowrap; }
+.ytl-settings .language-picker select { display: block; margin-top: 4px; border: 1px solid #ccd8cd; border-radius: 8px; padding: 7px 10px; color: #223530; background: white; font: 12px system-ui; }
+.ytl-settings .local-badge { display: none; }
+.ytl-settings #language-status { margin: -18px 0 14px; text-align: right; }
+.ytl-settings .page-header > div { min-width: 0; }
+@media (max-width: 520px) { .ytl-settings .page-header { gap: 10px; } .ytl-settings h1 { font-size: 18px; } .ytl-settings .brand-icon { flex-shrink: 0; width: 36px; height: 36px; } }

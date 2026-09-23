@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><base href="/prototype/"><meta name="viewport" content="width=device-width, initial-scale=1"><title>YouTube Time Limiter · Interactive prototype</title><link rel="stylesheet" href="prototype.css"></head>
+<body>
+<header><div><span class="eyebrow">INTERACTIVE PROTOTYPE</span><h1>YouTube Time Limiter</h1><p>The production interface, with simulated playback and isolated demo data.</p></div><nav aria-label="Demo screens"><button id="watch-tab" class="selected" aria-pressed="true">Watch demo</button><button id="settings-tab" aria-pressed="false">Settings</button></nav></header>
+<main id="watch-view">
+  <div class="demo-grid"><section>
+    <div class="player"><span class="tag">SIMULATED VIDEO · NO NETWORK STREAM</span><div class="play-symbol" aria-hidden="true">▶</div><h2 id="video-title">Video A · Study session</h2><p id="playback" role="status">Paused</p></div>
+    <div class="transport"><button id="play">Play</button><button id="pause">Pause</button><button id="buffer">Buffer</button><button id="advance">Skip 10 seconds</button><button id="switch-video">Switch video</button></div>
+    <p class="note">Play emits real media-style events through the production tracker. No video decoding or YouTube integration is simulated.</p>
+    <section class="scenario"><h2>Try a scenario</h2><p>Settings, the floating timer, and reminders share one demo store.</p><div class="scenario-buttons"><button id="quick-start">Start 10-second allowance</button><button id="daily-case">3 hours watched / 1-hour limit</button><button id="next-day">Next day</button><button id="redirect-case">Try redirect</button><button id="reset">Reset demo</button></div><p id="demo-log" role="status">Demo ready. Choose a scenario or press Play.</p></section>
+  </section><aside class="guide"><span class="eyebrow">WHAT TO NOTICE</span><h2>Time stays visible.</h2><ol><li>The floating timer shows remaining time.</li><li>Buffering and pauses stop accrual.</li><li>At the limit, playback pauses before the action.</li><li>Exclude a video to bypass timing and limits.</li></ol><p>Use Settings to change language, limits, end actions and exclusions.</p><p>Redirects are intercepted and shown here. The prototype never navigates to an external destination.</p></aside></div>
+</main>
+<iframe id="settings-frame" title="Production settings with demo data" hidden></iframe>
+<footer>Prototype only · not connected to YouTube, Chrome storage, or an account · demo state stays in this tab’s session storage</footer>
+<script src="../src/shared/i18n.js"></script><script src="../src/shared/core.js"></script><script src="mock-runtime.js"></script><script src="../src/content/tracker.js"></script><script src="../src/content/overlay.js"></script><script src="watch.js"></script>
+</body></html>

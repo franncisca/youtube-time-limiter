@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title data-i18n="YouTube Time Limiter · 观看时间">YouTube Time Limiter · Watch time</title><link rel="stylesheet" href="styles.css"></head>
+<body class="ytl-settings">
+<main>
+  <header class="page-header"><span class="brand-icon" aria-hidden="true">▶</span><div><span class="eyebrow">YOUTUBE TIME LIMITER</span><h1><span data-i18n="让观看时间，刚刚好。">Make time for what matters.</span></h1></div><span class="local-badge"><span data-i18n="仅保存在本机">Stored on this device</span></span><label class="language-picker" for="language">Language / 语言<select id="language"><option value="zh-CN">中文</option><option value="en">English</option></select></label></header><p id="language-status" class="status" role="status"></p>
+  <section class="overview" aria-labelledby="current-mode">
+    <div class="overview-top"><span id="current-mode"><span data-i18n="正在读取计时…">Loading timer…</span></span><span id="limit-state" class="pill"><span data-i18n="加载中">Loading</span></span></div>
+    <div class="clock" id="usage" aria-label="Time watched" data-i18n-aria="已观看时长">00:00:00</div><p class="clock-caption"><span data-i18n="已观看 · 时 : 分 : 秒">Watched · hours : minutes : seconds</span></p>
+    <progress id="progress" max="100" value="0" aria-label="Allowance used" data-i18n-aria="已使用的观看额度"></progress>
+    <div class="metrics"><div><span><span data-i18n="剩余时间">Time left</span></span><strong id="remaining">--:--:--</strong></div><div><span><span data-i18n="当前上限">Limit</span></span><strong id="active-limit">--:--:--</strong></div></div>
+    <p id="range" class="range"><span data-i18n="仅在视频实际播放时累计">Only active playback counts</span></p>
+  </section>
+  <form id="settings" class="settings-card">
+    <fieldset id="controls" disabled>
+      <legend><span data-i18n="安排你的观看时间">Plan your watch time</span></legend>
+      <p class="section-note"><span data-i18n="每日额度设置一次，之后每天自动生效。也可以临时从现在开始计时。">Set a daily limit once, or start a temporary allowance now.</span></p>
+      <div class="mode-grid">
+        <label class="mode-card"><input type="radio" name="mode" id="mode-daily" value="daily" checked><span><strong><span data-i18n="每日默认额度">Daily limit</span></strong><small><span data-i18n="减去当天已观看的总时间">Includes everything watched today</span><br><span data-i18n="设置一次，每天自动生效">Set once. Renews every day.</span></small></span></label>
+        <label class="mode-card"><input type="radio" name="mode" id="mode-session" value="session"><span><strong><span data-i18n="临时从现在开始">Start now</span></strong><small><span data-i18n="从本次设置时刻开始计算">Counts from when you start</span><br><span data-i18n="今天午夜恢复每日默认额度">Daily limit returns at midnight</span></small></span></label>
+      </div>
+      <p id="mode-help" class="mode-help"></p>
+      <label id="limit-label" class="field-title" for="hours"><span data-i18n="每天最多观看">Daily allowance</span></label>
+      <div class="duration-inputs"><label><input id="hours" type="number" min="0" max="24" step="1" required value="0" inputmode="numeric"><span data-i18n="小时">Hours</span></label><span>:</span><label><input id="minutes" type="number" min="0" max="59" step="1" required value="30" inputmode="numeric"><span data-i18n="分钟">Minutes</span></label><span>:</span><label><input id="seconds" type="number" min="0" max="59" step="1" required value="0" inputmode="numeric"><span data-i18n="秒">Seconds</span></label></div>
+      <div class="presets" aria-label="Quick durations" data-i18n-aria="快捷时长"><button type="button" data-minutes="5"><span data-i18n="5 分钟">5 min</span></button><button type="button" data-minutes="15"><span data-i18n="15 分钟">15 min</span></button><button type="button" data-minutes="30"><span data-i18n="30 分钟">30 min</span></button><button type="button" data-minutes="60"><span data-i18n="1 小时">1 hour</span></button></div>
+      <div class="actions"><button id="save" class="primary" type="submit"><span data-i18n="保存">Save</span></button></div>
+      <p id="default-summary" class="section-note"></p>
+      <p id="status" role="status" class="status"></p>
+    </fieldset>
+  </form>
+  <form id="behavior-form" class="settings-card">
+    <fieldset id="behavior-controls" disabled>
+      <legend><span data-i18n="时间到了之后">When time is up</span></legend><p class="section-note"><span data-i18n="两种方式都会先暂停视频。适用于每日和临时额度。">Both options pause playback first and apply to daily and temporary limits.</span></p>
+      <div class="mode-grid">
+        <label class="mode-card"><input type="radio" name="limit-action" id="action-dialog" value="dialog" checked><span><strong><span data-i18n="暂停并弹窗">Pause &amp; remind</span></strong><small><span data-i18n="留在当前页面，提醒休息">Stay here and show a reminder</span></small></span></label>
+        <label class="mode-card"><input type="radio" name="limit-action" id="action-redirect" value="redirect"><span><strong><span data-i18n="暂停并跳转">Pause &amp; redirect</span></strong><small><span data-i18n="在当前标签页自动跳转">Open your calm page in this tab</span></small></span></label>
+      </div>
+      <div id="redirect-fields" hidden><label class="field-title" for="redirect-url"><span data-i18n="你的静心页面地址">Your calm page URL</span></label><input id="redirect-url" class="url-input" type="url" maxlength="2048" placeholder="https://example.com/breathe" autocomplete="url" aria-describedby="redirect-help"><p id="redirect-help" class="section-note"><span data-i18n="填写完整的 http:// 或 https:// 地址。若当前已达上限，保存后已打开的 YouTube 观看页也会跳转。跳转将替换当前页面，不会新开标签页。">Use a complete http:// or https:// URL. If the limit is already reached, saving also redirects open YouTube watch tabs. This replaces the current page; no new tab opens.</span></p></div>
+      <button class="primary" type="submit"><span data-i18n="保存">Save</span></button><p id="behavior-status" class="status" role="status"></p>
+    </fieldset>
+  </form>
+  <form id="exclusion-form" class="settings-card">
+    <fieldset id="exclusion-controls" disabled>
+      <legend><span data-i18n="不计时视频清单">Excluded videos</span></legend><p class="section-note"><span data-i18n="这些视频不消耗每日或临时额度，也不触发暂停、弹窗或跳转。之前已记录的时间不会扣回。">These videos use no allowance and trigger no pause, reminder or redirect. Previously recorded time stays unchanged.</span></p>
+      <label class="field-title" for="exclusion-video"><span data-i18n="YouTube 视频链接或 ID">YouTube video URL or ID</span></label><input id="exclusion-video" class="url-input" type="text" required maxlength="2048" placeholder="https://www.youtube.com/watch?v=…" autocomplete="off">
+      <label class="field-title exclusion-title" for="exclusion-title"><span data-i18n="备注名称（可选）">Label (optional)</span></label><input id="exclusion-title" class="url-input" type="text" maxlength="160" placeholder="e.g. Study course or meditation" data-i18n-placeholder="例如：学习课程、冥想练习">
+      <button class="primary exclusion-add" type="submit"><span data-i18n="添加">Add</span></button><p id="exclusion-status" class="status" role="status"></p>
+      <p id="exclusion-empty" class="section-note"><span data-i18n="还没有添加视频。也可以在观看页小窗点击“不计时”。">No videos yet. You can also select Exclude in the floating timer.</span></p><ul id="exclusion-list" class="exclusion-list" aria-label="Excluded video list" data-i18n-aria="已添加的不计时视频"></ul>
+    </fieldset>
+  </form>
+  <aside class="record-note"><h2><span data-i18n="当天已观看总时间">Total watched today</span></h2><p><span data-i18n="总时间 = 扩展自动记录 + 你补齐的未记录时间。扩展无法自动获取安装前、关闭或故障期间的观看时间，也不会读取 YouTube 历史。">Total = automatically recorded time + your manual correction. Viewing before installation or while the extension was off or not working cannot be recovered automatically. YouTube history is not read.</span></p><div class="today-row"><span><span data-i18n="今日总时间（所有模式合计）">Today’s total (all modes)</span></span><strong id="daily-total">00:00:00</strong></div><p id="time-source"></p>
+    <details class="correction"><summary><span data-i18n="补齐今日已观看时间">Correct today’s total</span></summary><p><span data-i18n="例如今天实际已看 3 小时，在下方填 03:00:00。填写的是今日总时间，不是额外增加的时间。建议先暂停视频；补齐只影响今天，不会扣减临时额度。">If you watched 3 hours today, enter 03:00:00. Enter the total, not additional time. Pause playback first. Corrections affect today only, not your temporary allowance.</span></p>
+      <p id="correction-date"></p><form id="correction-form"><fieldset id="correction-controls" disabled><div class="duration-inputs"><label><input id="total-hours" type="number" min="0" max="24" step="1" required value="0"><span data-i18n="小时">Hours</span></label><span>:</span><label><input id="total-minutes" type="number" min="0" max="59" step="1" required value="0"><span data-i18n="分钟">Minutes</span></label><span>:</span><label><input id="total-seconds" type="number" min="0" max="59" step="1" required value="0"><span data-i18n="秒">Seconds</span></label></div><button class="secondary" type="submit"><span data-i18n="保存">Save</span></button><p id="correction-status" role="status"></p></fieldset></form>
+    </details>
+  </aside>
+  <footer><span data-i18n="暂停、缓冲和拖动进度时不计时 · 后台播放会计时 · 多个视频同时播放分别累计">Pauses, buffering and seeking do not count. Background playback counts. Simultaneous videos count separately.</span><br><span data-i18n="达到上限会暂停视频；调整上限后，请手动恢复播放。">Playback pauses at the limit. Resume manually after changing your allowance.</span></footer>
+</main><script src="../shared/i18n.js"></script><script src="../shared/core.js"></script><script src="index.js"></script>
+</body></html>
