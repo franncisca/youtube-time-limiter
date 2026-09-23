@@ -11,7 +11,7 @@ TZ=America/New_York npm test
 git diff --check
 ```
 
-No third-party test packages are required. Tests use Node's test runner, injected clocks/storage and browser-like API doubles. The suite currently contains 51 tests.
+No third-party test packages are required. Tests use Node's test runner, injected clocks/storage and browser-like API doubles. The suite currently contains 52 tests.
 
 | Test file | Main coverage |
 | --- | --- |
@@ -52,12 +52,14 @@ Run `npm run prototype` and follow [the demo script](prototype.md). This checks 
 
 Keep its results separate from installed-extension results. A functioning prototype does not establish actual Chrome API compatibility, video performance or YouTube selector stability.
 
-Verified in the in-app browser on 2026-09-23: English initial UI, production settings embedded with demo data, a 10-second allowance pausing with a reminder, next-day restoration of the daily allowance, intercepted redirect after pausing, and demo reset. The 51 automated tests also passed in the default environment and with `TZ=America/Los_Angeles`.
+Verified in the in-app browser on 2026-09-23: English initial UI, production settings embedded with demo data, a 10-second allowance pausing with a reminder, next-day restoration of the daily allowance, intercepted redirect after pausing, and demo reset. The 52 automated tests also passed in the default environment and with `TZ=America/Los_Angeles`.
 
 ## Performance evidence
 
 The original playback-stutter report has no completed real-browser A/B measurement. Confirmed accounting and startup defects have regression tests, but their existence does not identify the stutter cause. Follow [the comparison protocol](performance.md) and record dropped-frame deltas, buffering conditions and traces before making performance claims.
 
-## Localization regression checks
+## Localization and overlay regression checks
 
 Message coverage checks reject Chinese literals outside the translation resource, verify both dictionaries and matching interpolation placeholders, and resolve the message IDs used by application code. Settings integration tests verify local validation and domain errors in both languages without leaking message IDs into the UI.
+
+In the in-app browser prototype, exclusion toggles were measured with `getBoundingClientRect()` in English and Chinese at narrow and desktop widths. The panel stayed approximately 206 × 251.8 px at the narrow breakpoint and 232 × 251.8 px on desktop; action and exclusion button positions were unchanged before and after toggling. The progress row uses `visibility` with `aria-hidden`, and the detail row reserves space for two lines. This is a real layout check with simulated playback, not an installed-YouTube performance result.

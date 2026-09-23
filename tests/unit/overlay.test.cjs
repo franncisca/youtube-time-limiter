@@ -96,3 +96,19 @@ test('overlay and open dialog switch language live without a new alert or changi
   overlay.update({ ...state, language: 'zh-CN' }); assert.equal(overlay.dismiss.textContent, t('ui.gotIt', 'zh-CN'));
   assert.equal(overlay.error.textContent, t('ui.watchTimeCouldNotBeSavedReloadThis', 'zh-CN')); assert.equal(overlay.dialog.shows, shows); overlay.dispose();
 });
+test('exclusion keeps the progress row in layout and restores its accessible state when included', () => {
+  for (const language of ['en', 'zh-CN']) {
+    const { overlay, state } = setup(); overlay.getVideoId = () => 'aaaaaaaaaaa'; overlay.toggleExclusion = async () => {};
+    overlay.setVisible(true); overlay.update({ ...state, language });
+    const nodes = [...overlay.body.children];
+    overlay.update({ ...state, language, excludedVideos: [{ id: 'aaaaaaaaaaa', title: '' }] });
+    assert.deepEqual(overlay.body.children, nodes);
+    assert.notEqual(overlay.progress.hidden, true);
+    assert.equal(overlay.progress.style.visibility, 'hidden');
+    assert.equal(overlay.progress.getAttribute('aria-hidden'), 'true');
+    overlay.update({ ...state, language });
+    assert.equal(overlay.progress.style.visibility, 'visible');
+    assert.equal(overlay.progress.getAttribute('aria-hidden'), 'false');
+    overlay.dispose();
+  }
+});

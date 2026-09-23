@@ -10,8 +10,8 @@
     .header span { font-weight: 600; font-size: 12px; }
     .icon { background: #ffffff16; color: white; padding: 2px 8px; }
     .label { margin: 12px 0 0; color: #ccdecf; font-size: 11px; }
-    .time { font-size: 32px; line-height: 1.4; font-weight: 650; font-variant-numeric: tabular-nums; letter-spacing: 1px; }
-    .detail { margin: 6px 0 10px; font-size: 11px; color: #c9dbcd; }
+    .time { white-space: nowrap; font-size: 32px; line-height: 1.4; font-weight: 650; font-variant-numeric: tabular-nums; letter-spacing: 1px; }
+    .detail { min-height: 33px; line-height: 16.5px; margin: 6px 0 10px; font-size: 11px; color: #c9dbcd; }
     progress { appearance: none; display: block; width: 100%; height: 5px; border: 0; border-radius: 8px; overflow: hidden; background: #ffffff24; }
     progress::-webkit-progress-bar { background: #ffffff24; }
     progress::-webkit-progress-value { background: #c9e5a8; }
@@ -122,7 +122,9 @@
       this.excludeButton.hidden = !id || !this.toggleExclusion;
       this.excludeButton.textContent = excluded ? this.t('ui.include') : this.t('ui.exclude');
       this.label.textContent = excluded ? this.t('ui.currentVideo') : this.t('ui.watchTimeLeft');
-      this.progress.hidden = excluded;
+      // Reserve the progress row even when this video is excluded.
+      this.progress.style.visibility = excluded ? 'hidden' : 'visible';
+      this.progress.setAttribute('aria-hidden', String(excluded));
       const usage = root.YTLCore.currentUsage(normalized, this.now());
       const format = root.YTLCore.formatTime;
       this.mode.textContent = normalized.mode === 'session' ? this.t('ui.temporaryAllowance') : this.t('ui.dailyAllowanceText');

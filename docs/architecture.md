@@ -127,3 +127,5 @@ None of those validate YouTube decoding, actual Chrome worker suspension, real s
 `src/shared/i18n.js` owns the English and Chinese dictionaries. Application logic and HTML use stable English message IDs, such as `ui.save` and `error.correctionBelowTotal`; Chinese copy belongs only in the language resource. Keep IDs stable when editing wording.
 
 Domain validation throws an error whose message is a language-independent `error.*` ID. The worker forwards that ID through its existing error response; the settings page resolves it in the user's selected language. This keeps the domain and background independent of presentation. Unexpected browser/storage errors retain their diagnostic message, wrapped in a localized status message. Missing locales fall back to English.
+
+The overlay reserves layout space for its hidden progress row and for two lines of detail text. Excluding or including a video changes the displayed state without shifting the panel or its controls. Intentional collapse still changes the panel height.
